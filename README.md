@@ -1,6 +1,6 @@
 # ETL-in-Python-and-Duckdb2
 
-![Ilustração e anotações sobre ETL do projeto](./etl_project.png)
+![Ilustração e anotações sobre ETL do projeto](./etl_project.png)  
 
 ### Processos e requisitos no desenvolvimento do ETL
 1. Baixar arquivos do Gloogle Drive

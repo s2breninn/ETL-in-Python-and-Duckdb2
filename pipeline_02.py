@@ -72,15 +72,16 @@ def salvar_no_postgres(df_pandas_transformado, tabela):
     # Salvar o DataFrame no PostgresSQL
     df_pandas_transformado.to_sql(tabela, con=engine, if_exists='append', index=False)
 
-if __name__ == '__main__':
+def pipeline():
     url = 'https://drive.google.com/drive/folders/1WhdNw56xWZ8lCk5DSXoYh3R5uL1ZiGkR'
     diretorio_local = './folder_gdown'
-    #baixar_arquivos_gloogle_drive(url, diretorio_local)
+    baixar_arquivos_gloogle_drive(url, diretorio_local)
     con = conectar_banco()
     inicializar_tabela(con)
     processados = arquivos_processados(con)
     arquivos_e_tipos = listar_arquivos_e_tipos(diretorio_local)
 
+    logs = []
     for caminho_arquivo, tipo in arquivos_e_tipos:
         nome_arquivo = os.path.basename(caminho_arquivo)
         if nome_arquivo not in processados:
@@ -88,6 +89,11 @@ if __name__ == '__main__':
             df_transformado = transformar(df) # Df em Duckdb transformado em Pandas
             salvar_no_postgres(df_transformado, 'vendas_calculado')
             registrar_arquivo(con, nome_arquivo)
-            print(f'Arquivo {nome_arquivo} processado e salvo.')
+            logs.append(f'Arquivo {nome_arquivo} processado e salvo.')
         else:
-            print(f'Arquivo {nome_arquivo} já foi processado anteriomente')
+            logs.append(f'Arquivo {nome_arquivo} já foi processado anteriomente')
+    
+    return logs
+
+if __name__ == '__main__':
+    pipeline()

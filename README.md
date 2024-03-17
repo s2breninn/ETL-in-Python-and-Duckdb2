@@ -19,6 +19,22 @@
         - Fim do processamento do arquivo
 
 ---
+# DuckDB e Python para ETL
+
+DuckDB é uma biblioteca leve e eficiente para processamento de dados em memória que suporta consultas SQL. Esta biblioteca tem ganhado popularidade no ecossistema de análise de dados em Python devido à sua rapidez e facilidade de uso.
+
+## Por que usar DuckDB para ETL?
+
+- **Desempenho excepcional**: DuckDB é otimizado para consultas analíticas e operações de ETL, oferecendo um desempenho excepcional mesmo com grandes volumes de dados.
+
+- **Integração perfeita com Python**: Com uma interface Pythonic, DuckDB pode ser facilmente integrado em fluxos de trabalho existentes em Python, permitindo que os desenvolvedores usem suas habilidades em Python para processar e transformar dados.
+
+- **Flexibilidade na manipulação de dados**: DuckDB suporta uma ampla gama de recursos SQL para manipulação de dados, tornando-o altamente flexível para realizar uma variedade de transformações durante o processo de ETL.
+
+- **Portabilidade e facilidade de implantação**: DuckDB é uma biblioteca em memória e não requer uma configuração complexa de banco de dados, facilitando sua implantação e uso em diferentes ambientes.
+
+- **Compatibilidade com outras ferramentas**: DuckDB é compatível com diversas ferramentas e bibliotecas de análise de dados em Python, como pandas e SQLAlchemy, tornando-o uma escolha versátil para integração em fluxos de trabalho existentes.  
+---
 
 ## Descrição das Bibliotecas Utilizadas
 

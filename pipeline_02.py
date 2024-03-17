@@ -36,18 +36,28 @@ def baixar_arquivos_gloogle_drive(url, diretorio_local):
     gdown.download_folder(url, output=diretorio_local, quiet=False, use_cookies=False)
 
 # Função para listar arquivos CSV no diretório especificado
-def listar_arquivos_csv(diretorio):
-    arquivos_csv = []
-    todos_arquivos = os.listdir(diretorio)
-    for arquivo in todos_arquivos:
-        if arquivo.endswith('.csv'):
+def listar_arquivos_e_tipos(diretorio):
+    # Listar arquivos e identifica se são CSV, JSON ou Parquet
+    """Lista arquivos e identifica se são CSV, JSON ou Parquet."""
+    arquivos_e_tipos = []
+    for arquivo in os.listdir(diretorio):
+        if arquivo.endswith(".csv") or arquivo.endswith(".json") or arquivo.endswith(".parquet"):
             caminho_completo = os.path.join(diretorio, arquivo)
-            arquivos_csv.append(caminho_completo)
-    return arquivos_csv
+            tipo = arquivo.split(".")[-1]
+            arquivos_e_tipos.append((caminho_completo, tipo))
+    return arquivos_e_tipos
 
-# Funcão para ler arquivos CSV e retornar um DataFrame do duckdb
-def ler_arquivos_csv(caminho_arquivo):
-    return duckdb.read_csv(caminho_arquivo)
+# Funcão para ler e checar os tipos de arquivos
+def ler_arquivos(caminho_arquivo, tipo):
+    # Ler arquivo com o seu tipo e retorna em DataFrame
+    if tipo == 'csv':
+        return duckdb.read_csv(caminho_arquivo)
+    elif tipo == 'json':
+        return duckdb.read_json(caminho_arquivo)
+    elif tipo == 'parquet':
+        return duckdb.read_parquet(caminho_arquivo)
+    else:
+        raise ValueError(f'Tipo de arquivo não suportado: {tipo}')
 
 # Função para adicionar uma coluna de total de vendas 
 def transformar(df):
@@ -66,17 +76,17 @@ if __name__ == '__main__':
     url = 'https://drive.google.com/drive/folders/1WhdNw56xWZ8lCk5DSXoYh3R5uL1ZiGkR'
     diretorio_local = './folder_gdown'
     #baixar_arquivos_gloogle_drive(url, diretorio_local)
-    lista_de_arquivos = listar_arquivos_csv(diretorio_local)
     con = conectar_banco()
     inicializar_tabela(con)
     processados = arquivos_processados(con)
+    arquivos_e_tipos = listar_arquivos_e_tipos(diretorio_local)
 
-    for caminho_arquivo in lista_de_arquivos:
+    for caminho_arquivo, tipo in arquivos_e_tipos:
         nome_arquivo = os.path.basename(caminho_arquivo)
         if nome_arquivo not in processados:
-            df_duckdb = ler_arquivos_csv(caminho_arquivo)
-            df_pandas_transformado = transformar(df_duckdb) # Df em Duckdb transformado em Pandas
-            salvar_no_postgres(df_pandas_transformado, 'vendas_calculado')
+            df = ler_arquivos(caminho_arquivo, tipo)
+            df_transformado = transformar(df) # Df em Duckdb transformado em Pandas
+            salvar_no_postgres(df_transformado, 'vendas_calculado')
             registrar_arquivo(con, nome_arquivo)
             print(f'Arquivo {nome_arquivo} processado e salvo.')
         else:
